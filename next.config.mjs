@@ -11,7 +11,8 @@ const nextConfig = {
     return [
       {
         source: "/api/v1/:path*",
-        destination: "https://api-5-223-80-101.nip.io/api/v1/:path*",
+        destination:
+          "https://qx-profit-api-bff66bb8112c.herokuapp.com/api/v1/:path*",
       },
     ];
   },
