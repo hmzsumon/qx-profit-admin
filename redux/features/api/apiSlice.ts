@@ -27,6 +27,9 @@ export const apiSlice = createApi({
     "Accounts",
     "Positions",
     "Deposit",
+    "TradeInvestment",
+    "TradeInvestmentAccounts",
+    "TradeInvestmentLogs",
   ],
   endpoints: (builder) => ({}),
 });

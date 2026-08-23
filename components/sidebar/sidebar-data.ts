@@ -10,6 +10,7 @@ import {
   MessageSquare,
   Settings,
   SquareGanttChart,
+  TrendingUp,
   Upload,
   Users,
   Wallet,
@@ -69,6 +70,13 @@ export const NAV_ITEMS: NavItem[] = [
         href: "/withdrawals/pending",
       },
     ],
+  },
+  {
+    key: "trade-investment",
+    label: "Trade Investment",
+    icon: TrendingUp,
+    href: "/trade-investment",
+    badge: "new",
   },
 
   {
