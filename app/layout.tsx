@@ -19,21 +19,13 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Capitalise - Trade",
-  description: "Trade on your favorite trading platforms with Capitalise",
+  title: "QX Profit — Admin",
+  description: "QX Profit admin panel",
   openGraph: {
-    title: "Capitalise - Trade",
-    description: "Trade on your favorite trading platforms with Capitalise",
-    url: "https://sw999.bet",
-    siteName: "Capitalise",
-    images: [
-      {
-        url: "https://sw999.bet/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "SW999 - Bet",
-      },
-    ],
+    title: "QX Profit — Admin",
+    description: "QX Profit admin panel",
+    url: "https://www.qxprofit.com/",
+    siteName: "QX Profit",
     type: "website",
     locale: "en_US",
   },

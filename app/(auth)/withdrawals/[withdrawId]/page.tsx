@@ -195,10 +195,16 @@ export default function SingleWithdraw({
                 </div>
               </div>
 
-              <Row label="Network:">
-                <span className="font-semibold">{netWork}</span>
+              <Row label={netWork === "BINANCE_PAY" ? "Method:" : "Network:"}>
+                <span className="font-semibold">
+                  {netWork === "BINANCE_PAY" ? "Binance Pay" : netWork}
+                </span>
               </Row>
-              <Row label="Address:">
+              <Row
+                label={
+                  netWork === "BINANCE_PAY" ? "Binance Pay ID:" : "Address:"
+                }
+              >
                 <span className="flex items-center gap-2 font-semibold">
                   {netWorkAddress}
 

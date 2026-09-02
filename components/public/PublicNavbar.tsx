@@ -1,8 +1,7 @@
 "use client";
-import Logo from "@/public/logo/logo.png";
+import BrandLogo from "@/components/branding/BrandLogo";
 import { toggleMobileSidebar } from "@/redux/features/ui/sidebarSlice";
 import { AlignRight } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 const PublicNavbar = () => {
@@ -19,14 +18,7 @@ const PublicNavbar = () => {
 
           <div className="container mx-auto flex justify-between items-center">
             <div className="text-white text-lg font-bold">
-              <Image
-                src={Logo}
-                alt="Logo"
-                width={80}
-                height={80}
-                priority
-                className="inline-block mr-2"
-              />
+              <BrandLogo size={30} href="/" />
             </div>
             <div className="flex space-x-2">
               <Link href="/login" className="">

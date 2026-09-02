@@ -25,6 +25,12 @@ export default function AdminKycDetailsPage() {
 
   const kyc = data?.kyc;
 
+  const DOC_LABEL: Record<string, string> = {
+    nid: "National ID",
+    driving_license: "Driving licence",
+    passport: "Passport",
+  };
+
   const approve = async () => {
     try {
       await approveKyc({ id }).unwrap();
@@ -94,7 +100,10 @@ export default function AdminKycDetailsPage() {
               <div>Date of birth: {kyc.date_of_birth || "-"}</div>
               <div>Gender: {kyc.gender || "-"}</div>
               <div>Address: {kyc.residential_address || "-"}</div>
-              <div>Document type: {kyc.document_type || "-"}</div>
+              <div>
+                Document type:{" "}
+                {DOC_LABEL[kyc.document_type] || kyc.document_type || "-"}
+              </div>
               <div>Issuing country: {kyc.issuing_country || "-"}</div>
               <div>Status: {kyc.status || "-"}</div>
               <div>

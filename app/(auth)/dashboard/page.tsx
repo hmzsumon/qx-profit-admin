@@ -76,19 +76,6 @@ export default function AdminDashboardPage() {
             value={formatCurrency(d?.totalNetWithdraw || 0)}
             accent={<ArrowDownToLine className="h-5 w-5 text-white/50" />}
           />
-          <MetricCard
-            title="AI Trade Profit"
-            value={formatCurrency(d?.totalAiTradeProfit || 0)}
-            accent={<TrendingUp className="h-5 w-5 text-emerald-400" />}
-            subtitle={aiDelta}
-          />
-
-          <MetricCard
-            title="AI Trade ROI"
-            value={formatCurrency(d?.totalAiTradeCommission || 0)}
-            accent={<TrendingUp className="h-5 w-5 text-emerald-400" />}
-            subtitle={aiDelta}
-          />
         </div>
 
         {/* ────────── middle charts ────────── */}

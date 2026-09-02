@@ -1,4 +1,4 @@
-/* ── Capitalise Auth Page (modular) ─────────────────────────────────────────── */
+/* ── QX Profit Auth Page (modular) ─────────────────────────────────────────── */
 "use client";
 
 import RegisterForm from "@/components/reagiter-login/RegisterForm";
@@ -12,7 +12,7 @@ export default function AuthPage(): JSX.Element {
   return (
     <section className="mx-auto max-w-xl px-2 py-8">
       <h1 className="mb-6 text-center text-2xl font-extrabold tracking-tight text-white">
-        Welcome to Capitalise
+        Welcome to QX Profit
       </h1>
 
       <div className="mb-6 flex justify-center gap-8">

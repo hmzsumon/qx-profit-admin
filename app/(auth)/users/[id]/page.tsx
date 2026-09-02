@@ -150,14 +150,6 @@ export default function AdminUserDetailsPage() {
             value={fmtCurrency(wallet?.totalWithdraw)}
           />
           <UserKeyStat
-            label="AI Trade Balance"
-            value={fmtCurrency(wallet?.totalAiTradeBalance)}
-          />
-          <UserKeyStat
-            label="AI Trade P&L"
-            value={fmtCurrency(wallet?.totalAiTradeProfit)}
-          />
-          <UserKeyStat
             label="Total Earning"
             value={fmtCurrency(wallet?.totalEarning)}
           />
@@ -204,10 +196,6 @@ export default function AdminUserDetailsPage() {
               <UserPropertyItem
                 label="Withdraw Block"
                 value={String(user.is_withdraw_block)}
-              />
-              <UserPropertyItem
-                label="AI Trade Active"
-                value={String(user.is_active_aiTrade)}
               />
               <UserPropertyItem
                 label="Created At"
@@ -302,14 +290,6 @@ export default function AdminUserDetailsPage() {
                 <UserPropertyItem
                   label="Total Commission"
                   value={fmtCurrency(wallet.totalCommission)}
-                />
-                <UserPropertyItem
-                  label="AI Trade Commission"
-                  value={fmtCurrency(wallet.totalAiTradeCommission)}
-                />
-                <UserPropertyItem
-                  label="Live Trade Commission"
-                  value={fmtCurrency(wallet.totalLiveTradeCommission)}
                 />
                 <UserPropertyItem
                   label="This Month Earning"

@@ -30,6 +30,10 @@ export const apiSlice = createApi({
     "TradeInvestment",
     "TradeInvestmentAccounts",
     "TradeInvestmentLogs",
+    "RankTiers",
+    "QxBroker",
+    "DailyVideos",
+    "Announcements",
   ],
   endpoints: (builder) => ({}),
 });

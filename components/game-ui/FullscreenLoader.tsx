@@ -3,6 +3,7 @@
 
 /* ── Types ───────────────────────────────────────────────────────────── */
 import React, { useEffect, useRef, useState } from "react";
+import BrandLogo from "@/components/branding/BrandLogo";
 
 type AssetKind = "img" | "audio" | "video" | "fetch" | "font";
 type AssetInput =
@@ -304,11 +305,7 @@ export default function FullscreenLoader({
       <div className="relative w-full max-w-md px-6 py-7 rounded-2xl border border-white/10 bg-black/50 backdrop-blur-md shadow-[0_10px_40px_rgba(0,0,0,.6)]">
         {/* Logo / Title */}
         <div className="mb-5 flex items-center justify-center text-white">
-          {logo ?? (
-            <div className="font-extrabold tracking-widest text-lg">
-              LOADING…
-            </div>
-          )}
+          {logo ?? <BrandLogo variant="mark" size={40} href={null} />}
         </div>
 
         {/* Progress Bar */}

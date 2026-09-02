@@ -1,18 +1,20 @@
 // Central place to edit menu items
 import type { LucideIcon } from "lucide-react";
 import {
+  Award,
   Bot,
-  ChartCandlestick,
   Clock4,
   Download,
   Grid2x2,
   LifeBuoy,
+  Megaphone,
   MessageSquare,
   Settings,
   SquareGanttChart,
   TrendingUp,
   Upload,
   Users,
+  Video,
   Wallet,
 } from "lucide-react";
 
@@ -29,19 +31,20 @@ export type NavItem = {
 
 export const NAV_ITEMS: NavItem[] = [
   { key: "dashboard", label: "Dashboard", icon: Grid2x2, href: "/dashboard" },
+  { key: "daily-video", label: "Daily Video", icon: Video, href: "/daily-video" },
+  {
+    key: "announcements",
+    label: "Announcements",
+    icon: Megaphone,
+    href: "/announcements",
+  },
   { key: "users", label: "All Users", icon: Users, href: "/users" },
 
   {
-    key: "accounts",
-    label: "Live Accounts",
-    icon: ChartCandlestick,
-    href: "/accounts",
-  },
-  {
-    key: "ai-accounts",
-    label: "Ai Accounts",
+    key: "qx-broker",
+    label: "QX Broker",
     icon: Bot,
-    href: "/ai-accounts",
+    href: "/qx-trade",
   },
 
   {
@@ -73,30 +76,16 @@ export const NAV_ITEMS: NavItem[] = [
   },
   {
     key: "trade-investment",
-    label: "Trade Investment",
+    label: "QX Investment",
     icon: TrendingUp,
     href: "/trade-investment",
     badge: "new",
   },
-
   {
-    key: "positions",
-    label: "Positions",
-    icon: ChartCandlestick,
-
-    children: [
-      { label: "Open", href: "/positions" },
-
-      {
-        label: "Closed",
-        href: "/closed-positions",
-      },
-
-      {
-        label: "Ai Loss Positions",
-        href: "/ai-loss-positions",
-      },
-    ],
+    key: "rank-reward",
+    label: "Rank Reward",
+    icon: Award,
+    href: "/rank-reward",
   },
 
   {
