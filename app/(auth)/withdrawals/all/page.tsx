@@ -6,8 +6,24 @@ import CustomNoRowsOverlay from "@/components/CustomNoRowsOverlay";
 import Card from "@/components/new-ui/Card";
 import StatusChip from "@/components/new-ui/StatusChip";
 import Tabs, { Tab } from "@/components/new-ui/Tabs";
+import DateRangeToolbar, {
+  inRange,
+  type RangeState,
+} from "@/components/admin/DateRangeToolbar";
+import PeriodSummaryCards from "@/components/admin/PeriodSummaryCards";
+import WithdrawSettingsCard from "@/components/withdraw/WithdrawSettingsCard";
 import { formatDate } from "@/lib/functions";
+import { useGetWithdrawAnalyticsQuery } from "@/redux/features/admin/adminAnalyticsApi";
 import { useGetAllWithdrawRequestsQuery } from "@/redux/features/withdraw/withdrawApi";
+
+const PRESET_LABEL: Record<string, string> = {
+  today: "today",
+  week: "this week",
+  month: "this month",
+  "last-month": "last month",
+  all: "all time",
+  custom: "selected range",
+};
 import {
   DataGrid,
   GridColDef,
@@ -36,16 +52,35 @@ const AllWithdraw = () => {
   const { data, isLoading } = useGetAllWithdrawRequestsQuery(undefined);
   const withdraws = (data?.withdraws ?? []) as Withdraw[];
 
+  const today = new Date().toISOString().slice(0, 10);
+  const [range, setRange] = useState<RangeState>({
+    preset: "today",
+    from: today,
+    to: today,
+  });
+
+  const { data: periodData, isFetching: periodLoading } =
+    useGetWithdrawAnalyticsQuery({
+      preset: range.preset,
+      from: range.from,
+      to: range.to,
+    });
+
   /* ────────── UX state ────────── */
   const [selectedTab, setSelectedTab] = useState<
     "all" | "pending" | "approved" | "rejected"
   >("all");
 
   /* ────────── derived data ────────── */
+  const inDateRange: Withdraw[] = useMemo(
+    () => withdraws.filter((w) => inRange(w.createdAt, range)),
+    [withdraws, range],
+  );
+
   const filtered: Withdraw[] = useMemo(() => {
-    if (selectedTab === "all") return withdraws;
-    return withdraws.filter((w) => w.status === selectedTab);
-  }, [withdraws, selectedTab]);
+    if (selectedTab === "all") return inDateRange;
+    return inDateRange.filter((w) => w.status === selectedTab);
+  }, [inDateRange, selectedTab]);
 
   const sum = (arr: Withdraw[], key: keyof Withdraw) =>
     arr.reduce((acc, w) => acc + (Number(w[key]) || 0), 0);
@@ -55,14 +90,16 @@ const AllWithdraw = () => {
 
   const statusCounts = useMemo(() => {
     const base = {
-      all: withdraws.length,
+      all: inDateRange.length,
       pending: 0,
       approved: 0,
       rejected: 0,
     };
-    withdraws.forEach((w) => (base[w.status] += 1));
+    inDateRange.forEach((w) => {
+      if (w.status in base) (base as any)[w.status] += 1;
+    });
     return base;
-  }, [withdraws]);
+  }, [inDateRange]);
 
   /* ────────── columns (v6-safe) ────────── */
   const columns: GridColDef<WithdrawRow>[] = [
@@ -175,10 +212,33 @@ const AllWithdraw = () => {
     <main className="min-h-screen bg-[#0B0D12] text-[#E6E6E6]">
       <div className="mx-auto max-w-7xl  py-4 md:p-8">
         <h2 className="text-2xl font-semibold tracking-tight mb-4">
-          All Withdraw
+          Withdraw accounting
         </h2>
 
-        {/* ────────── summary cards ────────── */}
+        <div className="mb-4">
+          <WithdrawSettingsCard />
+        </div>
+
+        {/* ────────── date range + period summary ────────── */}
+        <div className="mb-4 space-y-4">
+          <DateRangeToolbar value={range} onChange={setRange} />
+          <PeriodSummaryCards
+            label={PRESET_LABEL[range.preset] ?? "selected range"}
+            loading={periodLoading}
+            count={periodData?.count ?? 0}
+            amount={periodData?.amount ?? 0}
+            net={periodData?.net ?? 0}
+            fees={periodData?.fees ?? 0}
+            breakdown={(periodData?.byStatus ?? []).map((s) => ({
+              key: s.status,
+              count: s.count,
+              amount: s.amount,
+            }))}
+            breakdownTitle="By status"
+          />
+        </div>
+
+        {/* ────────── summary cards (filtered set) ────────── */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Card>
             <div className="flex items-center gap-3">

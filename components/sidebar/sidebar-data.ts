@@ -133,7 +133,7 @@ export const NAV_ITEMS: NavItem[] = [
     key: "support",
     label: "Support",
     icon: LifeBuoy,
-    href: "/dashboard/support",
+    href: "/support",
   },
   { key: "kyc", label: "KYC Requests", icon: MessageSquare, href: "/kyc" },
 ];

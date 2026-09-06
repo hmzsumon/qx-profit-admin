@@ -2,9 +2,23 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
 import socketUrl from '@/config/socketUrl'; // ✅ Use dedicated socket URL
+import { apiSlice } from '@/redux/features/api/apiSlice';
 import { SocketUser } from '@/types';
+
+/* admin notify sound — on by default, muted via localStorage */
+function playAdminNotifySound() {
+	try {
+		if (localStorage.getItem('qx_admin_notif_sound') === '0') return;
+		const a = new Audio('/sounds/notify.wav');
+		a.volume = 0.6;
+		void a.play().catch(() => {});
+	} catch {
+		/* autoplay blocked */
+	}
+}
 
 interface iSocketContextType {
 	socket: Socket | null;
@@ -20,6 +34,7 @@ export const SocketContextProvider = ({
 	children: React.ReactNode;
 }) => {
 	const { user } = useSelector((state: any) => state.auth);
+	const dispatch = useDispatch();
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const [isSocketConnected, setIsSocketConnected] = useState(false);
 	const [onlineUsers, setOnlineUsers] = useState<SocketUser[]>([]);
@@ -54,14 +69,30 @@ export const SocketContextProvider = ({
 	useEffect(() => {
 		if (!socket) return;
 
-		socket.on('getUsers', (users: SocketUser[]) => {
-			setOnlineUsers(users);
-		});
+		const onUsers = (users: SocketUser[]) => setOnlineUsers(users);
+
+		const onAdminNotif = (evt: { message?: string; title?: string }) => {
+			dispatch(apiSlice.util.invalidateTags(['AdminNotifications']));
+			const text = evt?.message || evt?.title || 'New activity';
+			toast(text, { icon: '🔔' });
+			playAdminNotifySound();
+		};
+
+		// canonical event does the cache refresh; `admin-notification` shows the toast
+		const onNotificationNew = () => {
+			dispatch(apiSlice.util.invalidateTags(['AdminNotifications']));
+		};
+
+		socket.on('getUsers', onUsers);
+		socket.on('admin-notification', onAdminNotif);
+		socket.on('notification:new', onNotificationNew);
 
 		return () => {
-			socket.off('getUsers');
+			socket.off('getUsers', onUsers);
+			socket.off('admin-notification', onAdminNotif);
+			socket.off('notification:new', onNotificationNew);
 		};
-	}, [socket]);
+	}, [socket, dispatch]);
 
 	return (
 		<SocketContext.Provider value={{ socket, isSocketConnected, onlineUsers }}>

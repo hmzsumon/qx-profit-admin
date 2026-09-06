@@ -1,5 +1,6 @@
 "use client";
 
+import { useGetAdminNotificationsQuery } from "@/redux/features/admin/adminNotificationApi";
 import { Bell, CircleUserRound, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -19,6 +20,12 @@ export default function Header({ open, onToggle }: Props) {
   const [userOpen, setUserOpen] = useState(false);
 
   const { user } = useSelector((state: any) => state.auth);
+
+  const { data: notifData } = useGetAdminNotificationsQuery(undefined, {
+    pollingInterval: 20_000,
+    skip: !user?._id,
+  });
+  const unreadCount = notifData?.notifications?.length ?? 0;
 
   // ESC দিয়ে যে কোনো ওভারলে/পপওভার বন্ধ
   useEffect(() => {
@@ -83,7 +90,7 @@ export default function Header({ open, onToggle }: Props) {
 
           {/* নোটিফিকেশন : সব স্ক্রিনে */}
           <button
-            className="rounded-lg p-2 text-neutral-300 hover:bg-neutral-900 hover:text-white"
+            className="relative rounded-lg p-2 text-neutral-300 hover:bg-neutral-900 hover:text-white"
             onClick={() => {
               setNotifOpen(true);
               setUserOpen(false);
@@ -91,8 +98,18 @@ export default function Header({ open, onToggle }: Props) {
             }}
             aria-haspopup="dialog"
             aria-expanded={notifOpen}
+            aria-label={
+              unreadCount > 0
+                ? `Notifications, ${unreadCount} unread`
+                : "Notifications"
+            }
           >
             <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="pointer-events-none absolute -right-0.5 -top-0.5 min-w-[18px] rounded-full border border-neutral-950 bg-red-600 px-1 text-center text-[10px] font-bold leading-4 text-white">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
           </button>
 
           {/* ইউজার মেনু (ডেস্কটপে) */}

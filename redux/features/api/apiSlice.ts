@@ -34,6 +34,9 @@ export const apiSlice = createApi({
     "QxBroker",
     "DailyVideos",
     "Announcements",
+    "AdminNotifications",
+    "SupportTickets",
+    "SupportConfig",
   ],
   endpoints: (builder) => ({}),
 });

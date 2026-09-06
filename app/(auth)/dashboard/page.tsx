@@ -1,102 +1,163 @@
 "use client";
 
-import CommissionBarChart from "@/components/admin/CommissionBarChart";
+import DepositWithdrawChart from "@/components/admin/DepositWithdrawChart";
 import LatestTransactionsTable, {
   Txn,
 } from "@/components/admin/LatestTransactionsTable";
 import MetricCard from "@/components/admin/MetricCard";
-import TeamSummaryList, { TeamRow } from "@/components/admin/TeamSummaryList";
-import TradingVolumeChart from "@/components/admin/TradingVolumeChart";
 import { formatCurrency, formatNumber } from "@/lib/format";
-import { useGetAdminDashboardQuery } from "@/redux/features/admin/adminApi";
+import { useGetAdminOverviewQuery } from "@/redux/features/admin/adminAnalyticsApi";
+import {
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  Banknote,
+  Clock,
+  Scale,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 
-import { ArrowDownToLine, Banknote, TrendingUp, Users } from "lucide-react";
-
-const tradingData = [
-  { month: "Jan", value: 120 },
-  { month: "Feb", value: 320 },
-  { month: "Mar", value: 410 },
-  { month: "Apr", value: 560 },
-];
-
-const commissionData = [
-  { month: "Jan", value: 6 },
-  { month: "Feb", value: 10 },
-  { month: "Mar", value: 16 },
-  { month: "Apr", value: 12 },
-];
-
-const txns: Txn[] = [
-  { id: "t1", name: "Jane Cooper", amount: +2000, date: "2023-04-25" },
-  { id: "t2", name: "Eleanor Pena", amount: -450, date: "2023-04-24" },
-  { id: "t3", name: "Cody Fisher", amount: +1400, date: "2023-04-24" },
-  { id: "t4", name: "Savannah Nguyen", amount: -210, date: "2023-04-24" },
-];
-
-const teamRows: TeamRow[] = [
-  { level: "A", commission: 1250 },
-  { level: "B", commission: 350 },
-  { level: "C", commission: 1400 },
-  { level: "D", commission: -210 },
-  { level: "E", commission: 1250 },
-  { level: "F", commission: 1000 },
-  { level: "G", commission: 1000 },
-  { level: "H", commission: 500 },
-  { level: "J", commission: 700 },
-];
+const PERIODS = [
+  { key: "today", label: "Today" },
+  { key: "week", label: "This Week" },
+  { key: "month", label: "This Month" },
+  { key: "lastMonth", label: "Last Month" },
+] as const;
 
 export default function AdminDashboardPage() {
-  const { data, isLoading } = useGetAdminDashboardQuery(undefined);
-  const { dashboardData: d } = data || {};
-  // console.log(d);
+  const { data: d, isLoading } = useGetAdminOverviewQuery();
 
-  /* ────────── these would come from API in production ────────── */
-
-  const aiDelta = "+12.5%";
+  const depRows: Txn[] = (d?.recentDeposits ?? []).map((r: any) => ({
+    id: r._id,
+    name: r.name || r.customerId || "—",
+    amount: Number(r.receivedAmount ?? r.amount ?? 0),
+    date: r.createdAt,
+  }));
+  const wdRows: Txn[] = (d?.recentWithdrawals ?? []).map((r: any) => ({
+    id: r._id,
+    name: r.name || r.customerId || "—",
+    amount: -Number(r.amount ?? 0),
+    date: r.createdAt,
+  }));
 
   return (
     <main className="min-h-screen bg-[#0B0D12] text-white">
-      <div className="mx-auto w-full max-w-7xl p-6 md:p-8">
-        <h1 className="mb-6 text-2xl font-semibold tracking-tight">Admin</h1>
+      <div className="mx-auto w-full max-w-7xl p-4 md:p-8">
+        <h1 className="mb-6 text-2xl font-semibold tracking-tight">
+          Company at a glance
+        </h1>
 
-        {/* ────────── top metrics ────────── */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* ── top metrics ── */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           <MetricCard
             title="Total Users"
-            value={formatNumber(d?.totalUsers || 0)}
+            value={formatNumber(d?.users.total ?? 0)}
+            subtitle={d ? `+${d.users.todayNew} today` : undefined}
             accent={<Users className="h-5 w-5 text-white/50" />}
           />
           <MetricCard
-            title="Total Deposit"
-            value={formatCurrency(d?.totalDeposits || 0)}
-            accent={<Banknote className="h-5 w-5 text-white/50" />}
+            title="Active Users"
+            value={formatNumber(d?.users.activeTotal ?? 0)}
+            accent={<Users className="h-5 w-5 text-white/50" />}
           />
           <MetricCard
-            title="Total Withdrawal"
-            value={formatCurrency(d?.totalNetWithdraw || 0)}
+            title="Total Deposits"
+            value={formatCurrency(d?.deposits.allTime.amount ?? 0)}
             accent={<ArrowDownToLine className="h-5 w-5 text-white/50" />}
+          />
+          <MetricCard
+            title="Total Withdrawals"
+            value={formatCurrency(d?.withdrawals.allTime.net ?? 0)}
+            accent={<ArrowUpFromLine className="h-5 w-5 text-white/50" />}
+          />
+          <MetricCard
+            title="Net Position"
+            value={formatCurrency(d?.net ?? 0)}
+            accent={<Scale className="h-5 w-5 text-white/50" />}
+          />
+          <MetricCard
+            title="Pending Withdrawals"
+            value={`${d?.withdrawals.pending.count ?? 0}`}
+            subtitle={d ? formatCurrency(d.withdrawals.pending.amount) : undefined}
+            accent={<Clock className="h-5 w-5 text-amber-400/70" />}
           />
         </div>
 
-        {/* ────────── middle charts ────────── */}
-        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <TradingVolumeChart data={tradingData} />
-          </div>
-          <div>
-            <CommissionBarChart data={commissionData} />
-          </div>
+        {/* ── QX Investment strip ── */}
+        <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <MetricCard
+            title="QX Investment Balance"
+            value={formatCurrency(d?.qxInvestment.totalBalance ?? 0)}
+            accent={<TrendingUp className="h-5 w-5 text-white/50" />}
+          />
+          <MetricCard
+            title="Active Investments"
+            value={formatNumber(d?.qxInvestment.activeCount ?? 0)}
+          />
+          <MetricCard
+            title="Profit Paid"
+            value={formatCurrency(d?.qxInvestment.totalUserProfit ?? 0)}
+          />
+          <MetricCard
+            title="Referral Bonus Paid"
+            value={formatCurrency(d?.qxInvestment.totalTeamBonus ?? 0)}
+          />
         </div>
 
-        {/* ────────── bottom tables ────────── */}
-        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <LatestTransactionsTable rows={txns} />
-          </div>
-          <div>
-            <TeamSummaryList rows={teamRows} />
-          </div>
+        {/* ── period band: deposits vs withdrawals per window ── */}
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {PERIODS.map((p) => {
+            const dep = d?.deposits[p.key];
+            const wd = d?.withdrawals[p.key];
+            return (
+              <div
+                key={p.key}
+                className="rounded-2xl border border-white/5 bg-[#0E1014] p-5"
+              >
+                <p className="text-sm text-white/60">{p.label}</p>
+                <div className="mt-3 space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="inline-flex items-center gap-1.5 text-emerald-400">
+                      <ArrowDownToLine className="h-4 w-4" /> Deposits
+                    </span>
+                    <span className="font-semibold">
+                      {formatCurrency(dep?.amount ?? 0)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="inline-flex items-center gap-1.5 text-rose-400">
+                      <ArrowUpFromLine className="h-4 w-4" /> Withdrawals
+                    </span>
+                    <span className="font-semibold">
+                      {formatCurrency(wd?.net ?? 0)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between border-t border-white/5 pt-2 text-xs text-white/50">
+                    <span>Net</span>
+                    <span className="font-semibold text-white/80">
+                      {formatCurrency((dep?.amount ?? 0) - (wd?.net ?? 0))}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
+
+        {/* ── chart ── */}
+        <div className="mt-6">
+          <DepositWithdrawChart data={d?.series ?? []} />
+        </div>
+
+        {/* ── recent activity ── */}
+        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <LatestTransactionsTable rows={depRows} title="Recent deposits" />
+          <LatestTransactionsTable rows={wdRows} title="Recent withdrawals" />
+        </div>
+
+        {isLoading && (
+          <p className="mt-6 text-center text-sm text-white/40">Loading live data…</p>
+        )}
       </div>
     </main>
   );

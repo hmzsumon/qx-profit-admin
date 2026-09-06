@@ -12,6 +12,7 @@ import { Play, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import AdminMetric from "./AdminMetric";
+import ReferralLevelCard from "./ReferralLevelCard";
 
 const fmt = (v: number) =>
   `${Number(v || 0).toLocaleString(undefined, { maximumFractionDigits: 8 })} USDT`;
@@ -63,6 +64,14 @@ export default function AdminTradeInvestmentScreen() {
         },
       );
     } catch {}
+  };
+
+  const saveLevelPercents = async (next: number[]) => {
+    await toast.promise(updateConfig({ levelPercents: next }).unwrap(), {
+      loading: "Saving referral levels...",
+      success: "Referral levels updated",
+      error: (e: any) => e?.data?.message || "Update failed",
+    });
   };
 
   const manualRun = async (dryRun: boolean) => {
@@ -141,18 +150,6 @@ export default function AdminTradeInvestmentScreen() {
             </label>
           ))}
           <label className="text-xs text-white/60 md:col-span-2">
-            Referral Level % (comma separated, e.g. 25,15,10,5,3)
-            <input
-              value={
-                Array.isArray(form?.levelPercents)
-                  ? form.levelPercents.join(",")
-                  : form?.levelPercents ?? ""
-              }
-              onChange={(e) => set("levelPercents", e.target.value)}
-              className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
-            />
-          </label>
-          <label className="text-xs text-white/60 md:col-span-2">
             Cron Skip Week Days (0=Sun..6=Sat, comma separated)
             <input
               value={
@@ -189,6 +186,13 @@ export default function AdminTradeInvestmentScreen() {
           <Save size={16} /> Save Config
         </button>
       </div>
+
+      {/* Referral level rewards */}
+      <ReferralLevelCard
+        value={config?.levelPercents ?? []}
+        saving={updateState.isLoading}
+        onSave={saveLevelPercents}
+      />
 
       {/* Today status */}
       <div className="mt-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4">

@@ -10,7 +10,25 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 /* ────────── API ────────── */
+import DateRangeToolbar, {
+  inRange,
+  type RangeState,
+} from "@/components/admin/DateRangeToolbar";
+import PeriodSummaryCards from "@/components/admin/PeriodSummaryCards";
+import { useGetDepositAnalyticsQuery } from "@/redux/features/admin/adminAnalyticsApi";
 import { useGetAllDepositRequestsQuery } from "@/redux/features/deposit/depositApi";
+
+const isoOf = (d: any): string =>
+  typeof d === "string" ? d : d?.$date ? d.$date : "";
+
+const PRESET_LABEL: Record<string, string> = {
+  today: "today",
+  week: "this week",
+  month: "this month",
+  "last-month": "last month",
+  all: "all time",
+  custom: "selected range",
+};
 
 /* ────────── helpers ────────── */
 // /* ────────── Comments lik this ────────── */
@@ -75,15 +93,34 @@ const AllDepositPage = () => {
   const { data, isLoading } = useGetAllDepositRequestsQuery(undefined);
   const deposits = (data?.deposits ?? []) as Deposit[];
 
+  const today = new Date().toISOString().slice(0, 10);
+  const [range, setRange] = useState<RangeState>({
+    preset: "today",
+    from: today,
+    to: today,
+  });
+
+  const { data: periodData, isFetching: periodLoading } =
+    useGetDepositAnalyticsQuery({
+      preset: range.preset,
+      from: range.from,
+      to: range.to,
+    });
+
   const [selectedTab, setSelectedTab] = useState<
     "all" | "pending" | "approved" | "rejected"
   >("all");
 
   /* ────────── filter/sum ────────── */
+  const inDateRange = useMemo(
+    () => deposits.filter((d) => inRange(isoOf(d.createdAt), range)),
+    [deposits, range],
+  );
+
   const filtered = useMemo(() => {
-    if (selectedTab === "all") return deposits;
-    return deposits.filter((d) => d.status === selectedTab);
-  }, [deposits, selectedTab]);
+    if (selectedTab === "all") return inDateRange;
+    return inDateRange.filter((d) => d.status === selectedTab);
+  }, [inDateRange, selectedTab]);
 
   const sum = (arr: Deposit[], key: keyof Deposit) =>
     arr.reduce((acc, d) => acc + (Number(d[key]) || 0), 0);
@@ -92,10 +129,17 @@ const AllDepositPage = () => {
   const totalReceived = sum(filtered, "receivedAmount");
 
   const statusCounts = useMemo(() => {
-    const base = { all: deposits.length, pending: 0, approved: 0, rejected: 0 };
-    deposits.forEach((d) => (base[d.status] += 1));
+    const base = {
+      all: inDateRange.length,
+      pending: 0,
+      approved: 0,
+      rejected: 0,
+    };
+    inDateRange.forEach((d) => {
+      if (d.status in base) (base as any)[d.status] += 1;
+    });
     return base;
-  }, [deposits]);
+  }, [inDateRange]);
 
   /* ────────── columns ────────── */
   const columns: GridColDef<Deposit & { id: string }>[] = [
@@ -199,10 +243,28 @@ const AllDepositPage = () => {
     <main className="min-h-screen bg-[#0B0D12] text-[#E6E6E6]">
       <div className="mx-auto max-w-7xl p-6 md:p-8">
         <h2 className="mb-4 text-2xl font-semibold tracking-tight">
-          All Deposit
+          Deposit accounting
         </h2>
 
-        {/* ────────── summary cards ────────── */}
+        {/* ────────── date range + period summary ────────── */}
+        <div className="mb-4 space-y-4">
+          <DateRangeToolbar value={range} onChange={setRange} />
+          <PeriodSummaryCards
+            label={PRESET_LABEL[range.preset] ?? "selected range"}
+            loading={periodLoading}
+            count={periodData?.count ?? 0}
+            amount={periodData?.amount ?? 0}
+            net={periodData?.net ?? 0}
+            breakdown={(periodData?.byChain ?? []).map((c) => ({
+              key: c.key,
+              count: c.count,
+              amount: c.amount,
+            }))}
+            breakdownTitle="By chain (settled)"
+          />
+        </div>
+
+        {/* ────────── summary cards (filtered set) ────────── */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Card>
             <div className="flex items-center gap-3">

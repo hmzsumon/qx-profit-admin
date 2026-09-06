@@ -13,10 +13,16 @@ export type Txn = {
   date: string; // ISO
 };
 
-export default function LatestTransactionsTable({ rows }: { rows: Txn[] }) {
+export default function LatestTransactionsTable({
+  rows,
+  title = "Latest Transactions",
+}: {
+  rows: Txn[];
+  title?: string;
+}) {
   return (
     <div className="rounded-2xl bg-[#0E1014] border border-white/5 p-5">
-      <p className="text-sm text-white/60 mb-3">Latest Transactions</p>
+      <p className="text-sm text-white/60 mb-3">{title}</p>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
