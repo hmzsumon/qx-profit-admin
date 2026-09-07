@@ -2,11 +2,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  poweredByHeader: false,
+  compress: true,
+
+  // Tree-shake heavy barrel imports so mobile bundles stay small.
+  experimental: {
+    optimizePackageImports: [
+      "@mui/material",
+      "@mui/x-data-grid",
+      "recharts",
+      "lucide-react",
+      "framer-motion",
+    ],
+  },
 
   // ── keep your Sass & rewrites ──────────────────────────────
   sassOptions: {
     additionalData: `$var: red;`,
   },
+  // Fallback proxy: the client now calls the API host directly (config/baseUrl),
+  // this only catches any stray relative /api/v1 request.
   async rewrites() {
     return [
       {

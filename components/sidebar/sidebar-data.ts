@@ -39,6 +39,12 @@ export const NAV_ITEMS: NavItem[] = [
     href: "/announcements",
   },
   { key: "users", label: "All Users", icon: Users, href: "/users" },
+  {
+    key: "transactions",
+    label: "Transactions",
+    icon: Clock4,
+    href: "/transactions",
+  },
 
   {
     key: "qx-broker",
@@ -102,13 +108,6 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
-    key: "history",
-    label: "Transaction history",
-    icon: Clock4,
-    href: "/dashboard/history",
-  },
-
-  {
     key: "settings",
     label: "Settings",
     icon: Settings,
@@ -123,13 +122,6 @@ export const NAV_ITEMS: NavItem[] = [
   },
 
   {
-    key: "chat",
-    label: "Live Chat",
-    icon: MessageSquare,
-    href: "/dashboard/chat",
-    section: "bottom",
-  },
-  {
     key: "support",
     label: "Support",
     icon: LifeBuoy,
@@ -139,7 +131,7 @@ export const NAV_ITEMS: NavItem[] = [
 ];
 
 export const INVITE_CARD = {
-  title: "Invite friends and earn money",
+  title: "All users",
   icon: SquareGanttChart,
-  href: "/dashboard/referrals",
+  href: "/users",
 };

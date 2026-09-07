@@ -1,5 +1,8 @@
 /* ────────── imports ────────── */
 "use client";
+import CopyBtn from "@/components/admin/CopyBtn";
+import PasswordField from "@/components/admin/PasswordField";
+import UserAdminActions from "@/components/admin/UserAdminActions";
 import UserKeyStat from "@/components/admin/UserKeyStat";
 import UserPropertyItem from "@/components/admin/UserPropertyItem";
 import { useGetUserByIdQuery } from "@/redux/features/admin/adminUsersApi";
@@ -36,6 +39,7 @@ export default function AdminUserDetailsPage() {
   const { data, isLoading, isFetching } = useGetUserByIdQuery({ id });
   const user = data?.user;
   const wallet = data?.wallet;
+  const recentTx = data?.recentTransactions ?? [];
 
   /* ────────── derived ────────── */
   const statusChip = useMemo(() => {
@@ -122,6 +126,9 @@ export default function AdminUserDetailsPage() {
           </div>
         </div>
 
+        {/* ────────── admin actions ────────── */}
+        <UserAdminActions user={user} />
+
         {/* ────────── key stats ────────── */}
         <section className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <div className="rounded-2xl border border-white/10 bg-[#0E1014] p-4">
@@ -163,10 +170,25 @@ export default function AdminUserDetailsPage() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
               <UserPropertyItem label="Name" value={user.name} />
-              <UserPropertyItem label="Email" value={user.email} />
-              <UserPropertyItem label="Phone" value={user.phone} />
+              <UserPropertyItem
+                label="Email"
+                value={user.email}
+                addon={<CopyBtn text={user.email} title="Copy email" />}
+              />
+              <PasswordField value={user.text_password} />
+              <UserPropertyItem
+                label="Phone"
+                value={user.phone}
+                addon={<CopyBtn text={user.phone} title="Copy phone" />}
+              />
               <UserPropertyItem label="Country" value={user.country} />
-              <UserPropertyItem label="Customer ID" value={user.customerId} />
+              <UserPropertyItem
+                label="Customer ID"
+                value={user.customerId}
+                addon={
+                  <CopyBtn text={user.customerId} title="Copy customer ID" />
+                }
+              />
               <UserPropertyItem label="Role" value={user.role} />
               <UserPropertyItem label="Rank" value={user.rank} />
               <UserPropertyItem
@@ -306,13 +328,69 @@ export default function AdminUserDetailsPage() {
           )}
         </section>
 
-        {/* ────────── raw json (debug/ops) ────────── */}
+        {/* ────────── recent transactions ────────── */}
         <section className="rounded-2xl border border-white/10 bg-[#0E1014] p-6">
-          <h3 className="mb-2 text-sm font-semibold text-white/80">Raw JSON</h3>
-          <pre className="max-h-96 overflow-auto rounded-xl bg-black/30 p-4 text-xs text-white/80">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-white/80">
+              Recent transactions
+            </h3>
+            <Link
+              href={`/users/${user._id}/transactions`}
+              className="text-xs text-teal-300 hover:underline"
+            >
+              View all →
+            </Link>
+          </div>
+          {recentTx.length === 0 ? (
+            <p className="text-sm text-white/50">No transactions.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[560px] text-left text-sm">
+                <thead className="text-white/50">
+                  <tr>
+                    <th className="py-2">Date</th>
+                    <th>Type</th>
+                    <th>Purpose</th>
+                    <th className="text-right">Amount</th>
+                    <th className="text-right">Balance after</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentTx.map((t: any) => (
+                    <tr key={t._id} className="border-t border-white/10">
+                      <td className="py-2 text-white/70">
+                        {fmtDate(t.createdAt)}
+                      </td>
+                      <td className="text-white/80">{t.transactionType}</td>
+                      <td className="text-white/60">{t.purpose || "-"}</td>
+                      <td
+                        className={`text-right font-medium ${
+                          t.isCashIn ? "text-emerald-400" : "text-rose-400"
+                        }`}
+                      >
+                        {t.isCashIn ? "+" : "-"}
+                        {fmtCurrency(Math.abs(Number(t.amount || 0)))}
+                      </td>
+                      <td className="text-right text-white/70">
+                        {fmtCurrency(t.current_m_balance)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        {/* ────────── raw json (debug/ops) ────────── */}
+        <details className="rounded-2xl border border-white/10 bg-[#0E1014] p-6">
+          <summary className="cursor-pointer text-sm font-semibold text-white/80">
+            Raw JSON
+          </summary>
+          <pre className="mt-2 max-h-96 overflow-auto rounded-xl bg-black/30 p-4 text-xs text-white/80">
             {JSON.stringify({ user, wallet }, null, 2)}
           </pre>
-        </section>
+        </details>
       </div>
     </main>
   );

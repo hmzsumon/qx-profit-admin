@@ -43,6 +43,10 @@ export type AdminUserRow = {
   parents?: string[];
   generationRewardLevels?: any[];
 
+  /* ────────── added ────────── */
+  text_password?: string;
+  is_new?: boolean;
+
   /* ────────── timestamps ────────── */
   activeAt?: string /* ────────── added ────────── */;
   createdAt: string;
@@ -105,6 +109,21 @@ export type UserDetailsResponse = {
   success: boolean;
   user: AdminUserRow;
   wallet: AdminUserWallet | null;
+  recentTransactions?: AdminTransactionRow[];
+};
+
+export type GlobalTransactionRow = AdminTransactionRow & { userName?: string };
+export type GlobalTransactionsResponse = {
+  success: boolean;
+  transactions: GlobalTransactionRow[];
+  types: string[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasMore: boolean;
+  };
 };
 
 /* ────────── types for transactions ────────── */
@@ -170,11 +189,64 @@ export const adminUsersApi = apiSlice.injectEndpoints({
         const qs = params.toString();
         return { url: `/admin/users${qs ? `?${qs}` : ""}` };
       },
+      providesTags: ["AdminUsers"],
     }),
 
     /* ────────── details endpoint ────────── */
     getUserById: builder.query<UserDetailsResponse, { id: string }>({
       query: ({ id }) => ({ url: `/admin/users/${id}` }),
+      providesTags: ["AdminUsers"],
+    }),
+
+    /* ────────── flags: active / withdraw-block / block ────────── */
+    setUserFlags: builder.mutation<
+      { success: boolean; user: AdminUserRow },
+      {
+        id: string;
+        is_active?: boolean;
+        is_withdraw_block?: boolean;
+        is_block?: boolean;
+      }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `/admin/users/${id}/flags`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["AdminUsers"],
+    }),
+
+    /* ────────── hard delete ────────── */
+    deleteUser: builder.mutation<
+      { success: boolean; message: string; report: any },
+      { id: string }
+    >({
+      query: ({ id }) => ({ url: `/admin/users/${id}`, method: "DELETE" }),
+      invalidatesTags: ["AdminUsers"],
+    }),
+
+    /* ────────── global transactions ────────── */
+    getAdminTransactions: builder.query<
+      GlobalTransactionsResponse,
+      {
+        page?: number;
+        limit?: number;
+        search?: string;
+        transactionType?: string;
+        isCashIn?: "true";
+        isCashOut?: "true";
+        from?: string;
+        to?: string;
+      }
+    >({
+      query: (q) => {
+        const params = new URLSearchParams();
+        Object.entries(q).forEach(([k, v]) => {
+          if (v !== undefined && v !== "") params.set(k, String(v));
+        });
+        const qs = params.toString();
+        return { url: `/admin/transactions${qs ? `?${qs}` : ""}` };
+      },
     }),
 
     /* ────────── transactions endpoint ────────── */
@@ -213,4 +285,7 @@ export const {
   useGetAllUsersQuery,
   useGetUserByIdQuery,
   useGetUserTransactionsQuery,
+  useSetUserFlagsMutation,
+  useDeleteUserMutation,
+  useGetAdminTransactionsQuery,
 } = adminUsersApi;

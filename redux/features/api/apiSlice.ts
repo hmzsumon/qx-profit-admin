@@ -36,6 +36,7 @@ export const apiSlice = createApi({
     "Announcements",
     "AdminNotifications",
     "SupportTickets",
+    "AdminUsers",
     "SupportConfig",
   ],
   endpoints: (builder) => ({}),
