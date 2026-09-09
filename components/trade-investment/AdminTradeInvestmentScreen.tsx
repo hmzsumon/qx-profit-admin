@@ -100,7 +100,7 @@ export default function AdminTradeInvestmentScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f141b] px-4 py-5 text-white">
+    <div className="min-h-screen bg-[#0f141b] px-2 py-5 text-white">
       {/* Header */}
       <div className="flex flex-col justify-between gap-3 rounded-3xl border border-white/10 bg-gradient-to-r from-emerald-500/15 to-sky-500/10 p-5 md:flex-row md:items-center">
         <div>

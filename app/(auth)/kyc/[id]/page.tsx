@@ -66,7 +66,7 @@ export default function AdminKycDetailsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0B0D12] p-6 text-[#E6E6E6]">
+    <main className="min-h-screen bg-[#0B0D12] px-2 py-6 text-[#E6E6E6]">
       <div className="mx-auto max-w-6xl space-y-6">
         <div className="flex items-center justify-between">
           <div>

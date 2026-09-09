@@ -113,7 +113,7 @@ export default function AdminManualDepositPage() {
     <main className="min-h-screen bg-[#0B0D12] text-[#E6E6E6]">
       <Toaster position="top-right" />
 
-      <div className="mx-auto max-w-4xl p-6 md:p-8">
+      <div className="mx-auto max-w-4xl px-2 py-6 md:p-8">
         <h2 className="mb-4 text-2xl font-semibold tracking-tight">
           Admin Manual Deposit
         </h2>

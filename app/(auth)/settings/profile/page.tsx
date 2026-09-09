@@ -33,7 +33,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-3 py-4 md:px-6 md:py-6">
+    <div className="mx-auto max-w-3xl px-2 py-4 md:px-6 md:py-6">
       {/* ── top cards: status + deposit limit ────────────────── */}
       <AccountSummary
         status={completed === 3 ? "verified" : "not_verified"}

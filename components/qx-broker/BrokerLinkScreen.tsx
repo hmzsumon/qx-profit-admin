@@ -31,7 +31,7 @@ export default function BrokerLinkScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f141b] px-4 py-6 text-white">
+    <div className="min-h-screen bg-[#0f141b] px-2 py-6 text-white">
       <div className="mx-auto max-w-2xl">
         <h1 className="text-2xl font-black">QX Broker</h1>
         <p className="mt-1 text-sm text-white/55">

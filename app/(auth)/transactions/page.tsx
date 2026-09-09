@@ -42,7 +42,7 @@ export default function AllTransactionsPage() {
 
   return (
     <main className="min-h-screen bg-[#0B0D12] text-[#E6E6E6]">
-      <div className="mx-auto max-w-7xl p-4 md:p-6">
+      <div className="mx-auto max-w-7xl px-2 py-4 md:p-6">
         <h1 className="mb-4 text-xl font-semibold">All Transactions</h1>
 
         {/* filters */}

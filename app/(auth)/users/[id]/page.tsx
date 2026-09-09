@@ -61,7 +61,7 @@ export default function AdminUserDetailsPage() {
   if (isLoading || isFetching) {
     return (
       <main className="min-h-screen bg-[#0B0D12] text-[#E6E6E6]">
-        <div className="mx-auto max-w-7xl p-6">
+        <div className="mx-auto max-w-7xl px-2 py-6">
           <div className="animate-pulse space-y-3">
             <div className="h-8 w-60 rounded bg-white/10" />
             <div className="h-6 w-40 rounded bg-white/10" />
@@ -81,7 +81,7 @@ export default function AdminUserDetailsPage() {
   if (!user) {
     return (
       <main className="min-h-screen bg-[#0B0D12] text-[#E6E6E6]">
-        <div className="mx-auto max-w-7xl p-6">
+        <div className="mx-auto max-w-7xl px-2 py-6">
           <button
             onClick={() => router.back()}
             className="text-sm text-teal-300 hover:underline"
@@ -100,7 +100,7 @@ export default function AdminUserDetailsPage() {
   /* ────────── render ────────── */
   return (
     <main className="min-h-screen bg-[#0B0D12] text-[#E6E6E6]">
-      <div className="mx-auto max-w-7xl p-6 space-y-6">
+      <div className="mx-auto max-w-7xl px-2 py-6 space-y-6">
         {/* ────────── header ────────── */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>

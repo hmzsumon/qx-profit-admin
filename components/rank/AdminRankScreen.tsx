@@ -86,7 +86,7 @@ export default function AdminRankScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f141b] px-4 py-5 text-white">
+    <div className="min-h-screen bg-[#0f141b] px-2 py-5 text-white">
       <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-amber-500/15 to-fuchsia-500/10 p-5">
         <p className="text-sm text-amber-300">Admin</p>
         <h1 className="text-2xl font-black">Rank Reward Control</h1>

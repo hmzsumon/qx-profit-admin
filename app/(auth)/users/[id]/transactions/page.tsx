@@ -61,7 +61,7 @@ export default function AdminUserTransactionsPage() {
 
   return (
     <main className="min-h-screen bg-[#0B0D12] text-[#E6E6E6]">
-      <div className="mx-auto max-w-7xl p-6 space-y-4">
+      <div className="mx-auto max-w-7xl px-2 py-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold">Transactions</h1>

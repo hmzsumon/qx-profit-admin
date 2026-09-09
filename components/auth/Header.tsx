@@ -61,7 +61,7 @@ export default function Header({ open, onToggle }: Props) {
   return (
     <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-neutral-900/60 bg-neutral-950/80 backdrop-blur supports-[backdrop-filter]:bg-neutral-950/60">
       {/* ফুল-উইডথ কন্টেইনার */}
-      <div className="mx-auto flex h-full w-full items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-full w-full items-center justify-between px-2 sm:px-4 lg:px-6">
         {/* Left: mobile menu + brand */}
         <div className="flex min-w-0 items-center gap-3">
           {/* মোবাইল: Drawer টগল (Menu ↔ X) */}

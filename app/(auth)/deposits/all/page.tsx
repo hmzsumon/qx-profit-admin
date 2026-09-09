@@ -241,7 +241,7 @@ const AllDepositPage = () => {
 
   return (
     <main className="min-h-screen bg-[#0B0D12] text-[#E6E6E6]">
-      <div className="mx-auto max-w-7xl p-6 md:p-8">
+      <div className="mx-auto max-w-7xl px-2 py-6 md:p-8">
         <h2 className="mb-4 text-2xl font-semibold tracking-tight">
           Deposit accounting
         </h2>

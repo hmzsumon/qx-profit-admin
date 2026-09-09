@@ -117,7 +117,7 @@ export default function AdminDailyVideoScreen() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-8 text-white">
+    <div className="mx-auto w-full max-w-5xl px-2 py-8 text-white">
       <h1 className="text-2xl font-bold">Daily Video</h1>
       <p className="mt-1 text-sm text-neutral-400">
         Upload the video users see on their dashboard. The newest three active

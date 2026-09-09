@@ -63,7 +63,7 @@ export default function AdminAnnouncementScreen() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-8 text-white">
+    <div className="mx-auto w-full max-w-4xl px-2 py-8 text-white">
       <h1 className="flex items-center gap-2 text-2xl font-bold">
         <Megaphone size={22} /> Announcements
       </h1>

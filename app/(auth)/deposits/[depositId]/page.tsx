@@ -109,7 +109,7 @@ export default function DepositDetailsPage({
 
   return (
     <main className="min-h-screen bg-[#0B0D12] text-[#E6E6E6]">
-      <div className="mx-auto max-w-5xl p-4 sm:p-6">
+      <div className="mx-auto max-w-5xl px-2 py-4 sm:p-6">
         <Card className="p-0 overflow-hidden">
           {/* ────────── header ────────── */}
           <div className="border-b border-white/10 p-6 text-center">

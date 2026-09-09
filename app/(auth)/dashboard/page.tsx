@@ -42,7 +42,7 @@ export default function AdminDashboardPage() {
 
   return (
     <main className="min-h-screen bg-[#0B0D12] text-white">
-      <div className="mx-auto w-full max-w-7xl p-4 md:p-8">
+      <div className="mx-auto w-full max-w-7xl px-2 py-4 md:p-8">
         <h1 className="mb-6 text-2xl font-semibold tracking-tight">
           Company at a glance
         </h1>
