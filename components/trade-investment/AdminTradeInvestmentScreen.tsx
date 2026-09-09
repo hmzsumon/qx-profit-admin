@@ -12,6 +12,7 @@ import { Play, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import AdminMetric from "./AdminMetric";
+import ProfitDaysCard from "./ProfitDaysCard";
 import ReferralLevelCard from "./ReferralLevelCard";
 
 const fmt = (v: number) =>
@@ -74,6 +75,14 @@ export default function AdminTradeInvestmentScreen() {
     });
   };
 
+  const saveProfitDays = async (excludedWeekDays: number[]) => {
+    await toast.promise(updateConfig({ excludedWeekDays }).unwrap(), {
+      loading: "Saving payout days...",
+      success: "Payout days updated",
+      error: (e: any) => e?.data?.message || "Update failed",
+    });
+  };
+
   const manualRun = async (dryRun: boolean) => {
     const p = Number(percent);
     if (!Number.isFinite(p) || p < 1 || p > 4) return toast.error("Percent must be between 1 and 4");
@@ -98,7 +107,8 @@ export default function AdminTradeInvestmentScreen() {
           <p className="text-sm text-emerald-300">Admin Analytics</p>
           <h1 className="text-2xl font-black">QX Investment Control</h1>
           <p className="mt-1 text-sm text-white/55">
-            Manage the profit percent, lock days, cancel charge and referral levels.
+            Manage the profit percent, payout days, lock days, cancel charge and
+            referral levels.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -149,27 +159,7 @@ export default function AdminTradeInvestmentScreen() {
               />
             </label>
           ))}
-          <label className="text-xs text-white/60 md:col-span-2">
-            Cron Skip Week Days (0=Sun..6=Sat, comma separated)
-            <input
-              value={
-                Array.isArray(form?.excludedWeekDays)
-                  ? form.excludedWeekDays.join(",")
-                  : form?.excludedWeekDays ?? ""
-              }
-              onChange={(e) =>
-                set(
-                  "excludedWeekDays",
-                  e.target.value
-                    .split(",")
-                    .map((s: string) => Number(s.trim()))
-                    .filter((n: number) => Number.isFinite(n)),
-                )
-              }
-              className="mt-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-white outline-none"
-            />
-          </label>
-          <label className="flex items-end gap-2 text-xs text-white/60">
+          <label className="flex items-end gap-2 text-xs text-white/60 md:col-span-2">
             <input
               type="checkbox"
               checked={!!form?.isActive}
@@ -186,6 +176,13 @@ export default function AdminTradeInvestmentScreen() {
           <Save size={16} /> Save Config
         </button>
       </div>
+
+      {/* Profit payout days */}
+      <ProfitDaysCard
+        value={config?.excludedWeekDays ?? []}
+        saving={updateState.isLoading}
+        onSave={saveProfitDays}
+      />
 
       {/* Referral level rewards */}
       <ReferralLevelCard

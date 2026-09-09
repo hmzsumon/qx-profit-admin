@@ -5,7 +5,6 @@ import { getErrorMessage } from "@/lib/getErrorMessage";
 import { useLogoutUserMutation } from "@/redux/features/auth/authApi";
 import { ChevronDown, Copy } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -18,18 +17,17 @@ export default function MobileSidebar({ open, onClose }: Props) {
   const [balanceOpen, setBalanceOpen] = useState(false);
   const [hideBalance, setHideBalance] = useState(false);
 
-  const router = useRouter();
   const [logoutUser, { isLoading }] = useLogoutUserMutation();
 
   const handleLogout = async () => {
     try {
       await logoutUser(undefined).unwrap();
-      toast.success("Logout successfully");
-
-      router.push("/");
     } catch (err) {
+      // Clear the session locally even if the API call fails.
       toast.error(getErrorMessage(err));
     }
+    // Hard navigation so middleware re-evaluates with the cleared cookie.
+    window.location.assign("/register-login");
   };
 
   const { user } = useSelector((state: any) => state.auth);

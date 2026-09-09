@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -13,7 +12,6 @@ import { Button, Field, Input } from "./UI";
 import { signInSchema, type SignInValues } from "./schemas";
 
 const SignInForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
-  const router = useRouter();
   const [loginAdmin, { isLoading }] = useLoginAdminMutation();
   const [show, setShow] = useState(false);
 
@@ -30,10 +28,11 @@ const SignInForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   const submit = handleSubmit(async (values) => {
     const tId = toast.loading("Signing in...");
     try {
-      const res = await loginAdmin(values).unwrap();
+      await loginAdmin(values).unwrap();
       toast.success("Signed in", { id: tId });
       onSuccess?.();
-      router.push("/dashboard");
+      // Hard navigation so middleware sees the freshly set auth cookie.
+      window.location.assign("/dashboard");
     } catch (e: any) {
       toast.error(e?.data?.error || "Unable to sign in", { id: tId });
     }

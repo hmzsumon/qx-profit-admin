@@ -2,24 +2,23 @@
 
 import { getErrorMessage } from "@/lib/getErrorMessage";
 import { useLogoutUserMutation } from "@/redux/features/auth/authApi";
-import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
 /* ── user header block used in Mobile ──────────────────────── */
 export default function SidebarUserBlock() {
   const { user } = useSelector((s: any) => s.auth);
-  const router = useRouter();
   const [logoutUser] = useLogoutUserMutation();
 
   const handleLogout = async () => {
     try {
       await logoutUser(undefined).unwrap();
-      toast.success("Logout successfully");
-      router.push("/");
     } catch (err) {
+      // Clear the session locally even if the API call fails.
       toast.error(getErrorMessage(err));
     }
+    // Hard navigation so middleware re-evaluates with the cleared cookie.
+    window.location.assign("/register-login");
   };
 
   return (
