@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
-import baseUrl from '@/config/baseUrl';
+import { apiOrigin } from '@/config/baseUrl';
 
 interface TickerData {
 	h: string;
@@ -49,7 +49,7 @@ export const TickerProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	useEffect(() => {
 		// Create a Socket.IO connection
-		const socket = io(baseUrl);
+		const socket = io(apiOrigin);
 
 		// Subscribe to the selected symbol
 		socket.emit('subscribe', symbol);

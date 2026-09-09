@@ -20,8 +20,9 @@ const nextConfig = {
   sassOptions: {
     additionalData: `$var: red;`,
   },
-  // Fallback proxy: the client now calls the API host directly (config/baseUrl),
-  // this only catches any stray relative /api/v1 request.
+  // Same-origin API proxy. RTK Query calls /api/v1/* (see config/baseUrl.ts) so
+  // the session cookie is set first-party on the admin domain — required for
+  // middleware.ts to see it. Do not point the browser at the API host directly.
   async rewrites() {
     return [
       {
