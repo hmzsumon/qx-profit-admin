@@ -20,7 +20,7 @@ export default function UserAdminActions({ user }: { user: AdminUserRow }) {
   const [showModal, setShowModal] = useState(false);
 
   const flag = async (
-    key: "is_active" | "is_withdraw_block" | "is_block",
+    key: "is_active" | "is_withdraw_block" | "is_block" | "email_verified",
     value: boolean,
     labelOn: string,
     labelOff: string,
@@ -49,7 +49,22 @@ export default function UserAdminActions({ user }: { user: AdminUserRow }) {
     <section className="rounded-2xl border border-white/10 bg-[#0E1014] p-6">
       <h3 className="mb-4 text-sm font-semibold text-white/80">Account actions</h3>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <label className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/20 px-3 py-2.5">
+          <span className="text-sm text-white/80">Admin email verified</span>
+          <input
+            type="checkbox"
+            checked={!!user.email_verified_by_admin}
+            disabled={saving || deleting || !!user.email_verified_by_admin}
+            title="Verify this email and allow login without an email code"
+            onChange={(e) => {
+              if (e.target.checked) {
+                void flag("email_verified", true, "Email verified successfully", "");
+              }
+            }}
+            className="h-4 w-4 accent-teal-400 disabled:cursor-not-allowed"
+          />
+        </label>
         <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-3 py-2.5">
           <span className="text-sm text-white/80">Active</span>
           <ToggleSwitch

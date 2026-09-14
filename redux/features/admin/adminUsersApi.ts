@@ -20,6 +20,7 @@ export type AdminUserRow = {
   is_block?: boolean;
   is_withdraw_block?: boolean /* ────────── added ────────── */;
   email_verified?: boolean /* ────────── added ────────── */;
+  email_verified_by_admin?: boolean;
   two_factor_enabled?: boolean /* ────────── added ────────── */;
   kyc_verified?: boolean;
   kyc_request?: boolean;
@@ -206,6 +207,7 @@ export const adminUsersApi = apiSlice.injectEndpoints({
         is_active?: boolean;
         is_withdraw_block?: boolean;
         is_block?: boolean;
+        email_verified?: boolean;
       }
     >({
       query: ({ id, ...body }) => ({

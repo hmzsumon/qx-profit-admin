@@ -1,7 +1,10 @@
 /* ────────── imports ────────── */
 "use client";
 
-import { AdminUserRow } from "@/redux/features/admin/adminUsersApi";
+import {
+  type AdminUserRow,
+  useSetUserFlagsMutation,
+} from "@/redux/features/admin/adminUsersApi";
 import {
   DataGrid,
   GridColDef,
@@ -10,6 +13,49 @@ import {
 } from "@mui/x-data-grid";
 import Link from "next/link";
 import { useMemo } from "react";
+import toast from "react-hot-toast";
+
+function EmailVerificationCell({
+  user,
+  tabIndex,
+}: {
+  user: AdminUserRow;
+  tabIndex: number;
+}) {
+  const [setFlags, { isLoading, isSuccess }] = useSetUserFlagsMutation();
+  const verified = !!user.email_verified_by_admin || isSuccess;
+
+  const verifyEmail = async () => {
+    if (verified || isLoading) return;
+    try {
+      await setFlags({ id: user._id, email_verified: true }).unwrap();
+      toast.success(`Email verified for ${user.email}`);
+    } catch (error: unknown) {
+      const message = (error as { data?: { message?: string } })?.data?.message;
+      toast.error(message || "Email verification failed. Please try again.");
+    }
+  };
+
+  return (
+    <label className="inline-flex items-center gap-2 text-xs">
+      <input
+        type="checkbox"
+        checked={verified}
+        disabled={verified || isLoading}
+        tabIndex={tabIndex}
+        aria-label={`Admin verify email for ${user.email}`}
+        title="Verify this email and allow login without an email code"
+        onChange={(event) => {
+          if (event.target.checked) void verifyEmail();
+        }}
+        className="h-4 w-4 accent-teal-400 disabled:cursor-not-allowed"
+      />
+      <span className={verified ? "text-emerald-400" : "text-white/70"}>
+        {verified ? "Verified" : isLoading ? "Verifying..." : "Verify email"}
+      </span>
+    </label>
+  );
+}
 
 /* ────────── helpers ────────── */
 const StatusPill = ({ active }: { active: boolean }) => (
@@ -41,6 +87,20 @@ const columns: GridColDef<AdminUserRow>[] = [
   { field: "customerId", headerName: "Customer ID", width: 140 },
   { field: "name", headerName: "Name", width: 200 },
   { field: "email", headerName: "Email", width: 240 },
+  {
+    field: "email_verified_by_admin",
+    headerName: "Admin email verified",
+    width: 180,
+    sortable: false,
+    filterable: false,
+    renderCell: (params: GridRenderCellParams<AdminUserRow>) => (
+      <EmailVerificationCell
+        key={params.row._id}
+        user={params.row}
+        tabIndex={params.hasFocus ? 0 : -1}
+      />
+    ),
+  },
   { field: "phone", headerName: "Phone", width: 160 },
   { field: "country", headerName: "Country", width: 140 },
   { field: "role", headerName: "Role", width: 110 },
