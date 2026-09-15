@@ -218,6 +218,32 @@ export const adminUsersApi = apiSlice.injectEndpoints({
       invalidatesTags: ["AdminUsers"],
     }),
 
+    /* ────────── profile: name / email / phone / country ────────── */
+    updateUserProfile: builder.mutation<
+      { success: boolean; user: AdminUserRow },
+      { id: string; name?: string; email?: string; phone?: string; country?: string }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `/admin/users/${id}/profile`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["AdminUsers"],
+    }),
+
+    /* ────────── balance adjustment ────────── */
+    adjustUserBalance: builder.mutation<
+      { success: boolean; user: { _id: string; m_balance: number } },
+      { id: string; amount: number; note?: string }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `/admin/users/${id}/balance`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["AdminUsers"],
+    }),
+
     /* ────────── hard delete ────────── */
     deleteUser: builder.mutation<
       { success: boolean; message: string; report: any },
@@ -288,6 +314,8 @@ export const {
   useGetUserByIdQuery,
   useGetUserTransactionsQuery,
   useSetUserFlagsMutation,
+  useUpdateUserProfileMutation,
+  useAdjustUserBalanceMutation,
   useDeleteUserMutation,
   useGetAdminTransactionsQuery,
 } = adminUsersApi;

@@ -1,6 +1,8 @@
 /* ────────── imports ────────── */
 "use client";
+import AdjustBalanceCard from "@/components/admin/AdjustBalanceCard";
 import CopyBtn from "@/components/admin/CopyBtn";
+import EditableUserInfo from "@/components/admin/EditableUserInfo";
 import PasswordField from "@/components/admin/PasswordField";
 import UserAdminActions from "@/components/admin/UserAdminActions";
 import UserKeyStat from "@/components/admin/UserKeyStat";
@@ -129,6 +131,9 @@ export default function AdminUserDetailsPage() {
         {/* ────────── admin actions ────────── */}
         <UserAdminActions user={user} />
 
+        {/* ────────── balance adjustment ────────── */}
+        <AdjustBalanceCard user={user} />
+
         {/* ────────── key stats ────────── */}
         <section className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <div className="rounded-2xl border border-white/10 bg-[#0E1014] p-4">
@@ -169,19 +174,8 @@ export default function AdminUserDetailsPage() {
           </h3>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <UserPropertyItem label="Name" value={user.name} />
-              <UserPropertyItem
-                label="Email"
-                value={user.email}
-                addon={<CopyBtn text={user.email} title="Copy email" />}
-              />
+              <EditableUserInfo user={user} />
               <PasswordField value={user.text_password} />
-              <UserPropertyItem
-                label="Phone"
-                value={user.phone}
-                addon={<CopyBtn text={user.phone} title="Copy phone" />}
-              />
-              <UserPropertyItem label="Country" value={user.country} />
               <UserPropertyItem
                 label="Customer ID"
                 value={user.customerId}
