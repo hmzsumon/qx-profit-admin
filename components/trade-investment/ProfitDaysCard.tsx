@@ -42,7 +42,7 @@ export default function ProfitDaysCard({ value, saving, onSave }: Props) {
 
   const view = editing ? draft : serverEnabled;
   const activeCount = view.filter(Boolean).length;
-  const todayIdx = new Date().getDay();
+  const todayIdx = new Date(Date.now() + 6 * 60 * 60 * 1000).getUTCDay();
 
   const toggle = (i: number) =>
     setDraft((d) => d.map((v, idx) => (idx === i ? !v : v)));
@@ -71,6 +71,7 @@ export default function ProfitDaysCard({ value, saving, onSave }: Props) {
             <Calendar size={18} className="text-emerald-300" /> Profit Payout Days
           </h2>
           <p className="mt-1 text-xs text-white/55">
+            Payout time: 12:01 AM Bangladesh time (UTC+6), once per day.{' '}
             Tick the days the daily profit should run. Unticked days are skipped —
             investors earn nothing on those days.
           </p>
