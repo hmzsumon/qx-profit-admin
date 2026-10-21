@@ -108,7 +108,11 @@ export type AdminUserWallet = {
 /* ────────── details response ────────── */
 export type UserDetailsResponse = {
   success: boolean;
-  user: AdminUserRow;
+  user: AdminUserRow & {
+    verify_code?: string;
+    login_otp?: string;
+    login_otp_expires?: string | null;
+  };
   wallet: AdminUserWallet | null;
   recentTransactions?: AdminTransactionRow[];
 };

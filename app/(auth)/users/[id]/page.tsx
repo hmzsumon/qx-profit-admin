@@ -38,10 +38,13 @@ export default function AdminUserDetailsPage() {
   const router = useRouter();
 
   /* ────────── data ────────── */
-  const { data, isLoading, isFetching } = useGetUserByIdQuery({ id });
+  const { data, isLoading, isFetching, refetch } = useGetUserByIdQuery({ id });
   const user = data?.user;
   const wallet = data?.wallet;
   const recentTx = data?.recentTransactions ?? [];
+  const activeLoginOtp = user?.login_otp && user.login_otp_expires &&
+    new Date(user.login_otp_expires).getTime() > Date.now()
+    ? user.login_otp : undefined;
 
   /* ────────── derived ────────── */
   const statusChip = useMemo(() => {
@@ -130,6 +133,33 @@ export default function AdminUserDetailsPage() {
 
         {/* ────────── admin actions ────────── */}
         <UserAdminActions user={user} />
+
+        <section className="rounded-2xl border border-white/10 bg-[#0E1014] p-6">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <h3 className="text-sm font-semibold text-white/80">Email Verification Codes</h3>
+            <button type="button" onClick={() => refetch()} className="text-sm text-teal-300 hover:underline">
+              Refresh codes
+            </button>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div>
+              <UserPropertyItem
+                label="Email verification code"
+                value={user.verify_code || "No pending code"}
+                addon={<CopyBtn text={user.verify_code} title="Copy email verification code" />}
+              />
+              <p className="mt-2 text-xs text-white/50">The code sent for email verification. Cleared after successful verification.</p>
+            </div>
+            <div>
+              <UserPropertyItem
+                label="Login OTP"
+                value={activeLoginOtp || "No active login OTP"}
+                addon={<CopyBtn text={activeLoginOtp} title="Copy login OTP" />}
+              />
+              <UserPropertyItem label="OTP expires at" value={fmtDate(user.login_otp_expires ?? undefined)} />
+            </div>
+          </div>
+        </section>
 
         {/* ────────── balance adjustment ────────── */}
         <AdjustBalanceCard user={user} />

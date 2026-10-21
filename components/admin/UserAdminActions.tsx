@@ -11,6 +11,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+// Temporarily disable user deletion. Set to true to restore it.
+const USER_DELETION_ENABLED = false;
+
 export default function UserAdminActions({ user }: { user: AdminUserRow }) {
   const router = useRouter();
   const [setFlags, { isLoading: saving }] = useSetUserFlagsMutation();
@@ -34,6 +37,8 @@ export default function UserAdminActions({ user }: { user: AdminUserRow }) {
   };
 
   const doDelete = async () => {
+    if (!USER_DELETION_ENABLED) return;
+
     try {
       await deleteUser({ id: user._id }).unwrap();
       toast.success("User and all data removed");
@@ -106,8 +111,9 @@ export default function UserAdminActions({ user }: { user: AdminUserRow }) {
       <div className="mt-4">
         <button
           onClick={() => setShowModal(true)}
-          disabled={!canDelete || saving}
-          className="inline-flex items-center gap-2 rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-2 text-sm font-semibold text-rose-300 hover:bg-rose-500/20 disabled:opacity-40"
+          disabled={!USER_DELETION_ENABLED || !canDelete || saving}
+          title="User deletion is temporarily disabled"
+          className="inline-flex items-center gap-2 rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-2 text-sm font-semibold text-rose-300 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <Trash2 size={15} /> Delete user & all data
         </button>
@@ -148,7 +154,7 @@ export default function UserAdminActions({ user }: { user: AdminUserRow }) {
               </button>
               <button
                 onClick={doDelete}
-                disabled={confirm !== user.customerId || deleting}
+                disabled={!USER_DELETION_ENABLED || confirm !== user.customerId || deleting}
                 className="rounded-lg bg-rose-500 px-4 py-1.5 text-sm font-bold text-white disabled:opacity-40"
               >
                 {deleting ? "Deleting…" : "Delete"}
