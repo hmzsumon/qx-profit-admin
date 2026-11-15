@@ -13,7 +13,7 @@ const DEV = process.env.NODE_ENV === "development";
 // Absolute API origin. Used for socket.io only (websockets are not proxied).
 export const apiOrigin = DEV
   ? "http://localhost:8000"
-  : "https://qx-profit-api-bff66bb8112c.herokuapp.com";
+  : "https://qx-profit-878840149c63.herokuapp.com";
 
 // Same-origin proxy in production, direct host in dev (localhost shares the
 // cookie across ports, so dev has no third-party-cookie problem).
