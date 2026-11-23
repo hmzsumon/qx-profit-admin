@@ -91,7 +91,7 @@ export default function AdminRankScreen() {
         <p className="text-sm text-amber-300">Admin</p>
         <h1 className="text-2xl font-black">Rank Reward Control</h1>
         <p className="mt-1 text-sm text-white/55">
-          Targets are measured against each user&apos;s total team investment volume. Add or edit tiers below.
+          QX1 requires 5 direct sponsors, $3,500 direct sales and $5,000 team sales. QX2 requires 4 direct QX1 achievers; QX3–QX5 require 6 QX2, 5 QX3 and 4 QX4 achievers anywhere in the downline. Rewards and salary remain as configured.
         </p>
       </div>
 
@@ -104,7 +104,7 @@ export default function AdminRankScreen() {
               <tr>
                 <th className="py-2">Key</th>
                 <th>Name</th>
-                <th>Target Volume</th>
+                <th>Qualification / team sales</th>
                 <th>Reward (USD)</th>
                 <th>Order</th>
                 <th>Active</th>
@@ -115,6 +115,7 @@ export default function AdminRankScreen() {
             <tbody>
               {tiers.map((t) => {
                 const d = draft[t._id] || {};
+                const rule=t.qualification;
                 return (
                   <tr key={t._id} className="border-t border-white/10">
                     <td className="py-2 text-white/50">{t.key}</td>
@@ -126,7 +127,9 @@ export default function AdminRankScreen() {
                       />
                     </td>
                     <td>
+                      {rule&&<p className="max-w-64 text-xs text-white/65">{rule.kind==='entry'?`${rule.directSponsors} direct sponsors · ${rule.directSales} direct sales · ${rule.teamSales} team sales`:`${rule.memberCount} ${rule.memberRank.toUpperCase()} achievers · ${rule.scope} · no sales requirement`}</p>}
                       <input
+                        disabled={!!t.qualification}
                         value={String(d.targetVolume ?? "")}
                         onChange={(e) => patch(t._id, "targetVolume", Number(e.target.value))}
                         className="w-28 rounded-lg border border-white/10 bg-black/30 px-2 py-1"

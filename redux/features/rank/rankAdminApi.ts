@@ -9,6 +9,7 @@ export type RankTier = {
   sortOrder: number;
   isActive: boolean;
   claimedCount?: number;
+  qualification?: {kind:"entry"|"members";directSponsors:number;directSales:number;teamSales:number;memberRank:string;memberCount:number;scope:"direct"|"downline"};
 };
 
 export const rankAdminApi = apiSlice.injectEndpoints({
