@@ -49,15 +49,10 @@ export default function AdminTradeInvestmentScreen() {
   const set = (k: string, v: any) => setForm((p: any) => ({ ...p, [k]: v }));
 
   const saveConfig = async () => {
-    const levelPercents = Array.isArray(form.levelPercents)
-      ? form.levelPercents.map(Number)
-      : String(form.levelPercents || "")
-          .split(",")
-          .map((s: string) => Number(s.trim()))
-          .filter((n: number) => Number.isFinite(n));
+    const settings = Object.fromEntries(CONFIG_FIELDS.map(({ key }) => [key, form[key]]));
     try {
       await toast.promise(
-        updateConfig({ ...form, levelPercents }).unwrap(),
+        updateConfig({ ...settings, isActive: form.isActive }).unwrap(),
         {
           loading: "Saving...",
           success: "Config updated",

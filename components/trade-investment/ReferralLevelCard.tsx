@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Pencil, Plus, Save, Trash2, X } from "lucide-react";
+import { Check, Pencil, Save, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -10,10 +10,10 @@ type Props = {
   onSave: (next: number[]) => Promise<unknown>;
 };
 
-const DEFAULTS = [25, 15, 10, 5, 3];
+const DEFAULTS = [20, 12, 8, 5, 4, 3, 2.5, 1.5, 1.25, 0.75];
 
 export default function ReferralLevelCard({ value, saving, onSave }: Props) {
-  const current = Array.isArray(value) && value.length ? value : DEFAULTS;
+  const current = value.length === DEFAULTS.length ? value : DEFAULTS;
 
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<string[]>(current.map(String));
@@ -29,19 +29,17 @@ export default function ReferralLevelCard({ value, saving, onSave }: Props) {
   const setAt = (i: number, v: string) =>
     setDraft((d) => d.map((x, idx) => (idx === i ? v.replace(/[^0-9.]/g, "") : x)));
 
-  const addLevel = () => setDraft((d) => [...d, "0"]);
-  const removeAt = (i: number) => setDraft((d) => d.filter((_, idx) => idx !== i));
-
   const cancel = () => {
     setDraft(current.map(String));
     setEditing(false);
   };
 
   const save = async () => {
-    const next = draft
-      .map((x) => Number(x))
-      .filter((n) => Number.isFinite(n) && n >= 0);
-    if (next.length === 0) return toast.error("Add at least one level");
+    const next = draft.map(Number);
+    if (!next.every((rate, i) => Number.isFinite(rate) && rate > 0 && (i === 0 || rate < next[i - 1])) ||
+        Math.abs(total - 58) >= 1e-10) {
+      return toast.error("Enter 10 positive, descending referral rates totaling 58%");
+    }
     try {
       await onSave(next);
       setEditing(false);
@@ -57,7 +55,7 @@ export default function ReferralLevelCard({ value, saving, onSave }: Props) {
           <h2 className="text-lg font-bold">Referral Level Rewards</h2>
           <p className="mt-1 text-xs text-white/55">
             Each upline level earns this % of the investor&apos;s gross daily
-            profit. The investor&apos;s own investment must be active to receive
+            profit. The upline must have an active investment to receive
             referral rewards.
           </p>
         </div>
@@ -103,6 +101,7 @@ export default function ReferralLevelCard({ value, saving, onSave }: Props) {
               <div className="flex items-center gap-2">
                 <div className="flex items-center rounded-lg border border-white/10 bg-black/40 px-2">
                   <input
+                    aria-label={`Level ${i + 1} rate`}
                     value={v}
                     inputMode="decimal"
                     onChange={(e) => setAt(i, e.target.value)}
@@ -110,14 +109,6 @@ export default function ReferralLevelCard({ value, saving, onSave }: Props) {
                   />
                   <span className="pl-1 text-white/40">%</span>
                 </div>
-                <button
-                  onClick={() => removeAt(i)}
-                  disabled={draft.length <= 1}
-                  className="rounded-lg p-1.5 text-white/50 hover:bg-white/10 hover:text-red-300 disabled:opacity-30"
-                  aria-label={`Remove level ${i + 1}`}
-                >
-                  <Trash2 size={15} />
-                </button>
               </div>
             ) : (
               <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-sm font-bold text-emerald-300">
@@ -133,14 +124,6 @@ export default function ReferralLevelCard({ value, saving, onSave }: Props) {
           {draft.length} level{draft.length === 1 ? "" : "s"} · total{" "}
           {total.toLocaleString(undefined, { maximumFractionDigits: 2 })}%
         </span>
-        {editing && (
-          <button
-            onClick={addLevel}
-            className="flex items-center gap-1.5 rounded-lg bg-white/10 px-3 py-1.5 font-bold text-white hover:bg-white/15"
-          >
-            <Plus size={14} /> Add level
-          </button>
-        )}
       </div>
 
       {!editing && (
